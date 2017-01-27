@@ -1,0 +1,15 @@
+animate is tailored only to player
+want a separate player_animate, object_animate, enemy_animate component system
+Item manager will hold the vector of item objects
+game engine will call functions of item manager such as update
+
+COMPONENT BASED DESIGN-
+
+
+Systems:
+Graphics
+GameLogic
+Windowing/Input
+UI
+Audio
+ObjectFactory

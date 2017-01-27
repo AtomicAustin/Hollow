@@ -1,0 +1,32 @@
+Items/inventory
+
+Item class- base class for all items. Items are drawn/positioned on the map until collided with
+then they're moved into the inventory
+	. position
+	. drop
+	. sprite
+	. tag
+
+Item Manager- class used for managing items on the map 
+	. Update position
+	. draw to screen
+	. collision
+	. get tag
+	. set tag
+	. add to inventory
+	. add to manager
+	. remove from manager
+
+Inventory GUI- sets up and displays the inventory GUI
+	. Set up rectangles
+	. track position
+
+Inventory Manager- manages items in the inventory
+	. add item to inventory
+	. remove item from inventory
+	. get item in inventory
+	. display items in inventory 
+	. set item position
+	. track mouse hovers
+
+Enemy Manager-

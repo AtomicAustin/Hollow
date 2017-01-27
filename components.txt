@@ -1,0 +1,115 @@
+**Components**
+
+Collider-
+Handles all collision detection
+	//initial collision check to see if axises are colliding
+	.axisCheck(x1, y1, x2, y2)
+	//detects which axis are colliding to handle the collision
+	.checkCollision(first rectangle, second rectangle)
+	//returns if the mouse is hovering over an object
+	.mouse-over collision(mouse position, object position)
+	//slower but simpler float rect collision for simple cases
+	.float rect position collision
+
+Animator-
+iterates the sprites over their sprite sheet
+	//set up animator
+	.Animator(sprite sheet, sprite size)
+	//give Animator new sprites/sizes
+	.setup(sprite sheet, sprite size)
+	.setDimensions(sprite sheet dimensions)
+
+	//iterate over the sprite sheet
+	.walking()
+	//check movement directions (-x,x,-y,y)
+	.releaseDirection(movement vector)
+	//change the y axis of spritesheet thus changing the direction of sprite
+	//combine x and y direction functions
+	.ChangeDirection(direction)
+	//set the offset to match when player is moving, swinging, or moving and swinging
+	.setOffset(action)
+	//reset the sprite sheet to standing positions
+	.reset();
+	//run the death animations
+	.dead();
+
+Move-
+//moves objects holds position, velocity, movement direction, and moving bool
+//base class
+	//basic move function
+	.move(rectangle to be moved)
+	.dropItem
+
+//overloads functions to move the player/enemy/npc properly
+//derived from move
+Move_player-
+	.move(velocity)
+	.stopped()
+Move_Enemy-
+	.move(velocity)
+	.stopped()
+Move_NPC-
+	.move(velocity)
+	.stopped()
+
+Input-
+takes user input
+	.left mouse click
+	.mouse-over
+	.inventory toggle
+	.pause menu toggle
+
+Hitbox-
+//creates, moves, deletes a hitbox
+	//create the box
+	.Hitbox(rectangle)
+	//update the box
+	.update(rectangle)
+	//return the box
+	.getBox()
+
+Death-
+//handle death of enemy or player
+	//drop items in the inventory
+	.drop items
+
+	
+
+Textbox-
+create textbox
+	.set up (fetch the text, create gui)
+	.display text portion
+	.adjust on scroll input
+
+Inventory-
+sets up and displays the inventory and items
+	.set up (create gui, add spaces and initial items)
+	.add item
+	.remove item
+	.get item
+	.display
+
+Craft-
+set up and display craft menu
+	.set up (create gui, add input/output spaces)
+	.item inserted
+	.output item
+	.display
+	.recipes logic
+
+Trade-
+set up and display trade menu
+	.set up (create gui, add input/output spaces)
+	.input item
+	.output item
+	.display
+	.trade logic
+
+Tooltip-
+set up and display item descriptions
+	.set up (create gui, get item text)
+	.display
+
+Tag-
+give object an ID
+	.return ID from list (name of object)

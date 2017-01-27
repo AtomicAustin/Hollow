@@ -1,0 +1,31 @@
+	**********************
+	*LEVEL BUILDER DESIGN*
+	**********************
+	
+FUNCTIONALITY:
+add/remove rectangles
+drag and drop shapes to different positions
+resize shapes
+shift environment view
+zoom in/out 
+exports dimensions/coordinates of rectangles into a .txt file
+
+DISPLAYED:
+level environment
+toolbox of shapes
+shapes in environment can be resized/moved
+export button
+
+CONTROLS:
+	Toolbox:
+		add shape - left-click to add shape to environment
+		manual add - left-click, hold, and drag to manually move shapes into environment
+		export - left-click export button to export shape dimensions 
+	Environment:
+		select - left-click shape to add resize handles
+			resize - left-click, hold, and drag handles
+		deselect - left-click environment to remove resize handles
+		adjust - left-click, hold, and drag environment to shift view
+		zoom - mousewheel scroll in/out to zoom the view
+		remove - right-click shape to remove it
+

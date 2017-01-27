@@ -1,0 +1,48 @@
+line to line intersection-
+
+top left point (x,y)
+width and height (w,h)
+
+player-(x1,y1,w1,h1)
+collider-(x2,y2,w2,h2)
+
+if x1 is in between x2 and x2+w2
+	if y1 is in between y2 and y2+h2
+		axis check(x1,y1,x2+w2,y2+h2)
+		if x return bottom
+		if y return right
+
+	if y1+h1 is in between y2 and y2+h2
+		top/right collision
+		axis check(x1,y1+h1,x2+w2,y2)
+		if x return top
+		if y return right
+
+if x1+w1 is in between x2 and x2+w2
+	if y1 is in between y2 and y2+h2
+		bottom/left collision
+		axis check(x1+w1,y1,x2,y2+h2)
+		if x return bottom
+		if y return left
+
+	if y1+h1 is in between y2 and y2+h2
+		top/left collision 
+		axis check(x1+w1,y1+h1,x2,y2)
+		if x return top
+		if y return left
+
+axis checks using arbitrary (x,y) and (x1,y1)
+if |(x-x1)| > |(y1-y)|
+	return x axis
+else
+	return y axis
+
+HANDLE COLLISION
+if bottom
+	y1 = y2+h2
+if top
+	y1 = y2-h1
+if left
+	x1 = x2-w1
+if right
+	x1 = x2+w2

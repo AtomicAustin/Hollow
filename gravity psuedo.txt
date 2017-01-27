@@ -1,0 +1,56 @@
+move down 1
+check bottom collision
+if colliding with something
+	move up 1
+else
+	apply gravity
+
+draw 
+
+position += velocity
+
+velocity += gravity
+
+
+gravity = 1
+velocity.y += gravity
+position.y += velocity.y
+
+check bottom collision
+if colliding
+	position.y -= velocity.y
+	velocity.y = 0
+
+update position
+draw
+
+***jump***
+
+velocity.y = -6
+
+velocity.y += 1
+
+position.y += velocity.y
+
+***structure generator***
+
+Need: x,y,width,height
+
+000.000.034.050
+
+create structure
+store in structure_collider
+
+***structure_collision***
+
+store float rects
+large collision check
+fine collision check
+
+for every structure 
+	hit=checkcollision(player, structure[i])
+	switch(hit)
+	case1 *top*		position.y = structure[i].top + sprite.height
+	case2 *bottom*	position.y = structure[i].top + structure[i].height + 1
+	case3 *left*	position.x = structure[i].left + sprite.width
+	case4 *right*	position.x = structure[i].left + structure[i].width + 1
