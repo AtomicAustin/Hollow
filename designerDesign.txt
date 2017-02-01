@@ -6,6 +6,7 @@ FUNCTIONALITY:
 add/remove rectangles
 drag and drop shapes to different positions
 resize shapes
+copy shapes
 shift environment view
 zoom in/out 
 exports dimensions/coordinates of rectangles into a .txt file
@@ -29,3 +30,25 @@ CONTROLS:
 		zoom - mousewheel scroll in/out to zoom the view
 		remove - right-click shape to remove it
 
+
+	*********************
+	*LEVEL BUILDER TO DO*
+	*********************
+
+FUNCTIONALITY:
+copy shapes
+shift environment view
+zoom in/out 
+
+DISPLAYED:
+toolbox of shapes
+functionality for different shapes
+
+CONTROLS:
+	Toolbox:
+		add shape - left-click to add shape to environment
+		manual add - left-click, hold, and drag to manually move shapes into environment
+		export - left-click export button to export shape dimensions 
+	Environment:
+		C - copy selected shape
+		zoom - mousewheel scroll in/out to zoom the view
