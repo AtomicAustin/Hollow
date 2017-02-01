@@ -7,3 +7,11 @@ struct collidedPackage{
     sf::FloatRect bounds;
 };
 #endif // COLLIDED_PACKAGE
+
+#ifndef INPUT_PACKAGE
+#define INPUT_PACKAGE
+struct inputPackage{
+    int pNum;
+    std::string pString;
+};
+#endif // INPUT_PACKAGE
