@@ -16,10 +16,14 @@ class Designer
         Designer();
         int environmentDisplay(sf::RenderWindow* window);
         void setUp();
-        bool loadstructures();
-        bool saveAllStructures();
 
-        int showPausemenu();
+        std::string getFileString();
+        bool loadstructures(std::string loadString);
+        void saveMenu();
+        void saveAs();
+        void saveCurrent();
+
+        void showPausemenu();
         void selected();
         void resizing();
         void dragging();
@@ -27,6 +31,7 @@ class Designer
         void deleteRect();
 
         void printStates();
+        void resetEnvironment();
         void changeState(Action mAction);
 
         Hovering mouseHovering();
@@ -44,6 +49,8 @@ class Designer
     protected:
 
     private:
+        int returnCode;
+
         SaveLoad* SLobject;
 
         Action mouseAction;
@@ -62,8 +69,11 @@ class Designer
 
         sf::RectangleShape* selectedShape;
 
+        sf::Font* pFont;
         GUI_designerPaused* pMenu;
-        int menuChoice;
+        GUI_getString* pGetString;
+        GUI_generic* pGenericMenu;
+        inputPackage mChoice;
 
         sf::RenderWindow* designerWindow;
         sf::View* view;
