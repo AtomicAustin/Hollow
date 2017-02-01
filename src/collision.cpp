@@ -21,21 +21,49 @@ collidedPackage Structure_Collider::checkCollision(sf::FloatRect p)
 {
     collidedPackage newPackage;
 
+    float left1 = p.left;
+    float top1 = p.top;
+    float right1 = p.left + p.width;
+    float bottom1 = p.top + p.height;
+
+    float left2, top2, right2, bottom2;
+
     for(int i = 0; i < structuresSize; i++){
 
-        float x1 = p.left;
-        float y1 = p.top;
-        float w1 = p.width;
-        float h1 = p.height;
+        left2 = staticStructures[i].left;
+        top2 = staticStructures[i].top;
+        right2 = left2 + staticStructures[i].width;
+        bottom2 = top2 + staticStructures[i].height;
 
-        float x2 = staticStructures[i].left;
-        float y2 = staticStructures[i].top;
-        float w2 = staticStructures[i].width;
-        float h2 = staticStructures[i].height;
-
-        if(x1 > x2 &&  x1 < x2+w2){
-            if(y1 > y2 && y1 < y2+h2){
-                if(axisCheck(x2+w2,y2+h2,x1,y1))
+        if(right1 > left2 && right1 < right2){
+            if(bottom1 > top2 && bottom1 < bottom2){
+                if(axisCheck(right1, bottom1, left2, top2)){
+                    newPackage.hit = 1;
+                    newPackage.bounds = staticStructures[i];
+                    return newPackage; //top
+                }
+                else{
+                    newPackage.hit = 3;
+                    newPackage.bounds = staticStructures[i];
+                    return newPackage; //left
+                }
+            }
+            if(top1 > top2 && top1 < bottom2){
+                if(axisCheck(right1, bottom2, left2, top1)){
+                    newPackage.hit = 2;
+                    newPackage.bounds = staticStructures[i];
+                    return newPackage; //bottom
+                }
+                else{
+                    newPackage.hit = 3;
+                    newPackage.bounds = staticStructures[i];
+                    return newPackage; //left
+                }
+            }
+        }
+        if(left1 > left2 &&  left1 < right2){
+            if(top1 > top2 && top1 < bottom2){
+                if(axisCheck(right2, bottom2, left1, top1))
                 {
                     newPackage.hit = 2;
                     newPackage.bounds = staticStructures[i];
@@ -47,8 +75,8 @@ collidedPackage Structure_Collider::checkCollision(sf::FloatRect p)
                     return newPackage; //right
                 }
             }
-            if(y1+h1 > y2 && y1+h1 < y2+h2){
-                if(axisCheck(x2+w2,y1+h1,x1,y2)){
+            if(bottom1 > top2 && bottom1 < bottom2){
+                if(axisCheck(right2, bottom1, left1, top2)){
                     newPackage.hit = 1;
                     newPackage.bounds = staticStructures[i];
                     return newPackage; //top
@@ -57,32 +85,6 @@ collidedPackage Structure_Collider::checkCollision(sf::FloatRect p)
                     newPackage.hit = 4;
                     newPackage.bounds = staticStructures[i];
                     return newPackage; //right
-                }
-            }
-        }
-        if(x1+w1 > x2 && x1+w1 < x2+w2){
-            if(y1 > y2 && y1 < y2+h2){
-                if(axisCheck(x1+w1,y2+h2,x2,y1)){
-                    newPackage.hit = 2;
-                    newPackage.bounds = staticStructures[i];
-                    return newPackage; //bottom
-                }
-                else{
-                    newPackage.hit = 3;
-                    newPackage.bounds = staticStructures[i];
-                    return newPackage; //left
-                }
-            }
-            if(y1+h1 > y2 && y1+h1 < y2+h2){
-                if(axisCheck(x1+w1,y1+h1,x2,y2)){
-                    newPackage.hit = 1;
-                    newPackage.bounds = staticStructures[i];
-                    return newPackage; //top
-                }
-                else{
-                    newPackage.hit = 3;
-                    newPackage.bounds = staticStructures[i];
-                    return newPackage; //left
                 }
             }
         }
