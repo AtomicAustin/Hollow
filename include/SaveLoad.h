@@ -13,6 +13,7 @@ class SaveLoad
         SaveLoad(const std::string);
         void changeFileName(const std::string);
         std::string getFileName();
+        void makeFile();
         void saveStructures(std::vector<sf::RectangleShape>);
         std::vector<sf::FloatRect> loadStructures();
         int returnToken(std::string&);
