@@ -1,33 +1,58 @@
 #include "SaveLoad.h"
 
+/*********************
+ **    SAVE/LOAD    **
+ *********************/
 SaveLoad::SaveLoad()
 {
     //ctor
 }
-SaveLoad::SaveLoad(const std::string nameOfFile) : fileName(nameOfFile)
+SaveLoad::SaveLoad(const std::string nameOfFile)
 {
+    changeFileName(nameOfFile);
+}
+void SaveLoad::changeFileName(std::string nameOfFile)
+{
+    if(nameOfFile == "NOSTRING"){
+        std::cout << "No string for file name" << std::endl;
+    }
+    else{
+        if(nameOfFile.length() > 4){
+            if(nameOfFile.substr(nameOfFile.length() - 4) != ".txt"){
+                nameOfFile += ".txt";
+            }
+        }
+        else{
+            nameOfFile += ".txt";
+        }
 
+        fileName = "saves/" + nameOfFile;
+    }
+}
+std::string SaveLoad::getFileName()
+{
+    return fileName;
+}
+void SaveLoad::makeFile()
+{
+    std::ofstream outfile(fileName.c_str());
+    outfile << "" << std::endl;
+    outfile.close();
 }
 void SaveLoad::saveStructures(std::vector<sf::RectangleShape> allShapes)
 {
     writeFile.open(fileName.c_str());
 
-    for(int i = 0; i < allShapes.size(); i++){
+    if(!allShapes.empty()){
+        for(int i = 0; i < allShapes.size(); i++){
 
-        sf::FloatRect toSave = allShapes[i].getGlobalBounds();
+            sf::FloatRect toSave = allShapes[i].getGlobalBounds();
 
-        writeFile << toSave.left << "%" << toSave.top << "%" << toSave.width << "%" << toSave.height << "% \n";
+            writeFile << toSave.left << "%" << toSave.top << "%" << toSave.width << "%" << toSave.height << "% \n";
+        }
     }
 
     writeFile.close();
-}
-void SaveLoad::changeFileName(const std::string newFilename)
-{
-    fileName = newFilename;
-}
-std::string SaveLoad::getFileName()
-{
-    return fileName;
 }
 std::vector<sf::FloatRect> SaveLoad::loadStructures()
 {
@@ -36,7 +61,10 @@ std::vector<sf::FloatRect> SaveLoad::loadStructures()
 
     loadFile.open(fileName.c_str());
 
-    if(loadFile.is_open()){
+    if(!loadFile.is_open()){
+        std::cout << "Couldn't open file - invalid string or can't locate file." << std::endl;
+    }
+    else{
         while(std::getline(loadFile, line)){
             sf::FloatRect newRect;
 
