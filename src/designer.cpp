@@ -1,19 +1,11 @@
 #include "designer.h"
 
-/*******************
-**   DESIGNER     **
-********************/
+/********************/
+/**   DESIGNER     **/
+/********************/
 Designer::Designer() : mouseAction(UNCLICK), currentState(FREE), mouseOver(NOTHING),
-    allShapesSize(0), selectedShape(NULL), menuChoice(0)
-{
-    printStates();
-    std::string fontName = "fonts/DesignFont.ttf";
-	sf::Font* font = new sf::Font;
-    if(!font->loadFromFile(fontName)){
-        std::cout << "couldn't load font" << std::endl;
-    }
-    pMenu = new GUI_designerPaused(sf::Vector2f(300,650), sf::Vector2f(900,450), font);
-}
+    allShapesSize(0), selectedShape(NULL)
+{}
 /**ENVIRONMENT**/
 int Designer::environmentDisplay(sf::RenderWindow* window)
 {
@@ -46,20 +38,17 @@ int Designer::environmentDisplay(sf::RenderWindow* window)
         while (designerWindow->pollEvent(event)){
 
 			if(event.type == sf::Event::Closed){
-                if(saveAllStructures()){
-                    std::cout << "structures saved" << std::endl;
+                if(SLobject != NULL){
+                    saveMenu();
                 }
-                else{
-                    std::cout << "couldn't save structures" << std::endl;
-                }
-                designerWindow->close();
+                returnCode = -1;
             }
             else if(event.type == sf::Event::KeyPressed){
                 if(event.key.code == sf::Keyboard::A){
                     addRectangle();
                 }
                 else if(event.key.code == sf::Keyboard::Escape){
-                    menuChoice = showPausemenu();
+                    showPausemenu();
                 }
             }
 			else if(event.type == sf::Event::MouseButtonReleased){
@@ -76,7 +65,6 @@ int Designer::environmentDisplay(sf::RenderWindow* window)
                             selected();
                         }
                     }
-
                 }
                 else if(mouseAction == R_HOLD){
                     if(hoveringSelected() == OBJ_SELECTED && currentState == SELECTED){
@@ -90,37 +78,39 @@ int Designer::environmentDisplay(sf::RenderWindow* window)
 			}
 		}
 
-        if(menuChoice != 0){
-            switch(menuChoice){
-                case 2: {/* save space*/ ; break;}
-                case 3: {/*load environment*/; break;}
-                case 4: { return 1;}
-            }
-        }
-
 		update();
 
+        if(returnCode !=0){
+            break;
+        }
+
     }
-	return -1;
+	return returnCode;
 }
 void Designer::setUp()
 {
-    windowX_float = static_cast < float >(designerWindow->getSize().x);
-    windowY_float = static_cast < float >(designerWindow->getSize().y);
+    mChoice.pNum = 0;
+    returnCode = 0;
+
+    std::string fontName = "fonts/DesignFont.ttf";
+	pFont = new sf::Font;
+    if(!pFont->loadFromFile(fontName)){
+        std::cout << "could not load font" << std::endl;
+    }
+
+    pMenu = new GUI_designerPaused(sf::Vector2f(300,650), sf::Vector2f(575,300), pFont);
+    pGetString = new GUI_getString(sf::Vector2f(420,200), sf::Vector2f(575, 300), pFont);
+    pGenericMenu = NULL;
+    SLobject = NULL;
+
+    windowX_float = static_cast <float>(designerWindow->getSize().x);
+    windowY_float = static_cast <float>(designerWindow->getSize().y);
 
     background.setSize(sf::Vector2f(windowX_float, windowY_float));
     background.setFillColor(sf::Color::White);
     background.setPosition(0,0);
 
-    if(loadstructures()){
-        std::cout << "structures loaded" << std::endl;
-    }
-    else{
-        std::cout << "couldn't load structures" << std::endl;
-    }
-
     designerWindow->setFramerateLimit(30);
-
 }
 /**STATE CHANGE**/
 void Designer::changeState(Action mAction)
@@ -206,41 +196,95 @@ void Designer::printStates()
     }
     std::cout << std::endl;
 }
-/**PAUSE MENU**/
-int Designer::showPausemenu()
+void Designer::resetEnvironment()
 {
-/**SAVE/LOAD STRUCTURES**/
-    pMenu->show();
+    if(selectedShape != NULL){
+        delete selectedShape;
+        selectedShape = NULL;
+    }
+    if(pGenericMenu != NULL){
+        delete pGenericMenu;
+        pGenericMenu = NULL;
+    }
+    currentState = FREE;
+    mouseAction = UNCLICK;
+    mouseOver = mouseHovering();
 
-    std::cout << "Running pause menu" << std::endl;
+    allShapes.clear();
+    allShapesSize = 0;
+    mChoice.pNum = 0;
+
+}
+/**PAUSE MENU**/
+void Designer::showPausemenu()
+{
+    pMenu->makeVisible();
 
     while(pMenu->getVisible()){
+        mChoice = pMenu->show(designerWindow);
 
-        sf::Event GUIevent;
+        if(mChoice.pNum != 0){
+            switch(mChoice.pNum){
+                case 2: {saveMenu(); break;}
+                case 3: {
+                    if(loadstructures(getFileString())){
+                        std::cout << "Loaded structures" << std::endl;
+                    }
+                    else{
+                        pMenu->makeVisible();
+                        std::cout << "Could not load structures" << std::endl;
+                    }
 
-        while (designerWindow->pollEvent(GUIevent)){
-
-            if(GUIevent.type == sf::Event::KeyPressed){
-                if(GUIevent.key.code == sf::Keyboard::Escape){
-                    std::cout << "Hiding pause menu" << std::endl;
-                        pMenu->hide();
+                    break;
                 }
+                case 4: { returnCode = 1;}
             }
         }
 
-        pMenu->update();
-
         update();
-
     }
 }
-bool Designer::loadstructures()
+/**SAVE/LOAD STRUCTURES**/
+std::string Designer::getFileString()
 {
-    SLobject = new SaveLoad("saves/structures.txt");
+    pGetString->makeVisible();
+    pGetString->resetPackage();
+
+    mChoice.pNum = 0;
+    mChoice.pString = "";
+
+    while(pGetString->getVisible()){
+        mChoice = pGetString->show(designerWindow);
+        update();
+    }
+
+    std::cout << "Exiting File string loop" << "String =" << mChoice.pString << std::endl;
+
+    if(mChoice.pString == ""){
+        mChoice.pString = "NOSTRING";
+    }
+
+    return mChoice.pString;
+}
+bool Designer::loadstructures(std::string loadString)
+{
+    if(loadString == "NOSTRING"){
+        std::cout << "No string given" << std::endl;
+        return false;
+    }
+    if(loadString == "CANCEL"){
+        std::cout << "Load canceled" << std::endl;
+        return false;
+    }
+
+    SLobject = new SaveLoad(loadString);
 
     std::vector<sf::FloatRect> nStructures = SLobject->loadStructures();
 
     if(!nStructures.empty()){
+
+        resetEnvironment();
+
         for(int i = 0; i < nStructures.size(); i++){
 
             sf::Vector2f nSize = sf::Vector2f(nStructures[i].width, nStructures[i].height);
@@ -263,38 +307,72 @@ bool Designer::loadstructures()
         }
     }
     else{
-        std::cout << "empty file" << std::endl;
+        std::cout << "Empty file" << std::endl;
         return false;
     }
 
     return false;
 }
-bool Designer::saveAllStructures()
+void Designer::saveMenu()
 {
-    if(selectedShape != NULL){
-        allShapes.push_back(*selectedShape);
+    if(SLobject == NULL){
+        saveAs();
+    }
+    else{
+        //run save as / save current GUI
+        pGenericMenu = new GUI_generic(sf::Vector2f(250, 75), sf::Vector2f(575, 300), pFont, false);
+        pGenericMenu->addButton("Save");
+        pGenericMenu->addButton("Save As");
+
+        pGenericMenu->makeVisible();
+
+        mChoice.pNum = 0;
+
+        while(pGenericMenu->getVisible()){
+            mChoice = pGenericMenu->show(designerWindow);
+            update();
+        }
+        delete pGenericMenu;
+        pGenericMenu = NULL;
+
+        if(mChoice.pNum == 1){
+            saveCurrent();
+        }
+        else if(mChoice.pNum == 2){
+            saveAs();
+        }
+    }
+}
+void Designer::saveAs()
+{
+    if(SLobject != NULL){
+        delete SLobject;
     }
 
-    if(!allShapes.empty()){
+    SLobject = new SaveLoad(getFileString());
+
+    saveCurrent();
+}
+void Designer::saveCurrent()
+{
+    if(SLobject->getFileName() != ""){
+        if(selectedShape != NULL){
+            allShapes.push_back(*selectedShape);
+        }
+
         SLobject->saveStructures(allShapes);
 
         if(selectedShape != NULL){
             allShapes.pop_back();
         }
 
-        return true;
+        std::cout << "Saved structures to " << SLobject->getFileName() << std::endl;
+        return;
     }
 
-    std::cout << "no shapes to save" << std::endl;
-    return false;
+    std::cout << "Could not save structures. File name returned NULL" << std::endl;
 }
 /**STRUCTURE ADJUSTMENTS**/
-void Designer::selected()
-{
-    if(findSelected()){
-        createHandles();
-    }
-}
 void Designer::resizing()
 {
     std::cout << "Resizing" << std::endl;
@@ -427,6 +505,17 @@ void Designer::deleteRect()
     selectedShape = NULL;
 }
 /**CHECK MOUSE**/
+void Designer::selected()
+{
+    if(findSelected()){
+        if(handles.empty()){
+            createHandles();
+        }
+        else{
+            updateHandles();
+        }
+    }
+}
 Hovering Designer::mouseHovering()
 {
     mousePosition = sf::Mouse::getPosition(*designerWindow);
@@ -458,9 +547,7 @@ Hovering Designer::hoveringSelected()
                 return SIZE_HANDLE;
             }
         }
-        std::cout << "Checking if hovering over object selected" << std::endl;
         if(selectedShape->getGlobalBounds().contains(sf::Vector2f(mousePosition))){
-            std::cout << "returning  object selected" << std::endl;
             return OBJ_SELECTED;
         }
     }
@@ -473,23 +560,17 @@ bool Designer::findSelected()
 
     if(selectedShape != NULL){
         if(selectedShape->getGlobalBounds().contains(sf::Vector2f(mousePosition))){
-            std::cout << "Selecting already selected shape" << std::endl;
             return false;
         }
 
-        std::cout << "New selection is not previous selection" << std::endl;
-
         for(int i = 0; i < allShapesSize; i++){
             if(allShapes[i].getGlobalBounds().contains(sf::Vector2f(mousePosition))){
-                std::cout << "Selecting new shape" << std::endl;
                 sf::RectangleShape putBack = *selectedShape;
                 allShapes.push_back(putBack);
                 selectedShape = new sf::RectangleShape(allShapes[i]);
                 allShapes.erase(allShapes.begin()+i);
 
                 updateHandles();
-
-                std::cout << "allShapes Size: " << allShapesSize << std::endl;
                 return false;
             }
         }
@@ -500,12 +581,11 @@ bool Designer::findSelected()
             selectedShape = new sf::RectangleShape(allShapes[i]);
             allShapes.erase(allShapes.begin()+i);
             allShapesSize --;
-            std::cout << "allShapes Size: " << allShapesSize << std::endl;
+            std::cout << "found not selected" << std::endl;
             return true;
         }
     }
 
-    std::cout << "Couldn't find shape" << std::endl;
     selectedShape = NULL;
     return false;
 }
@@ -575,8 +655,17 @@ void Designer::update()
             designerWindow->draw(handles[i]);
         }
     }
+
     if(pMenu->getVisible()){
         designerWindow->draw(*pMenu);
+    }
+    if(pGetString->getVisible()){
+        designerWindow->draw(*pGetString);
+    }
+    if(pGenericMenu != NULL){
+        if(pGenericMenu->getVisible()){
+            designerWindow->draw(*pGenericMenu);
+        }
     }
 
 	designerWindow->display();
